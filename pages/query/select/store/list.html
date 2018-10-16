@@ -1,0 +1,291 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../../css/mui.min.css" />
+		<style type="text/css">
+			.mui-media {
+				font-size: 14px;
+			}
+			.mui-table-view:before,
+			.mui-table-view:after {
+				height: 0;
+			}
+			
+			.mui-content>.mui-table-view:first-child {
+				margin-top: 1px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">库存列表</h1>
+		</header>
+		<div class="mui-content" id="news">
+			<div class="mui-input-row mui-search" style="margin-top: 5px;">
+				<input type="search" class="mui-input-clear" placeholder="批次号/名称" v-model="search" v-on:blur.lazy="ss()">
+			</div>
+			<!--列表信息流 开始-->
+			<div id="list" class="mui-scroll-wrapper" style="margin-top: -10px;">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell" v-for="item in items">
+							<a href="javascript:;" :data-ID="item.ID" @tap="open_detail(item)">
+								<div class="mui-media-body">
+									<h4 class="mui-ellipsis mui-col-xs-12" style="text-indent: 1em;">名称 : {{ item.GoodsName }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编号 : {{ item.GoodsCode }}</h4>
+									<h5 class="mui-col-xs-12" style="text-indent: 2em;"></h5>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--列表信息流 结束-->
+		</div>
+
+		<script type="text/javascript" src="../../../../js/mui.min.js" ></script>
+		<script type="text/javascript" src="../../../../js/vue.js" ></script>
+		<script type="text/javascript">
+			var webview_detail = null; //详情页webview
+			var titleNView = { //详情页原生导航配置
+				backgroundColor: '#f7f7f7', //导航栏背景色
+				titleText: '', //导航栏标题
+				titleColor: '#000000', //文字颜色
+				type: 'transparent', //透明渐变样式
+				autoBackButton: true, //自动绘制返回箭头
+				splitLine: { //底部分割线
+					color: '#cccccc'
+				}
+			}
+			let tokenId = localStorage.getItem('tokenId');
+			console.log(tokenId);
+			let WMSUrl = localStorage.getItem('WMSUrl');
+			let maxIndex = 0;
+			let pagesize=15;
+			let search="";
+			//mui初始化，配置下拉刷新
+			mui.init({
+				pullRefresh: {
+					container: '#list',
+					down: {
+						style: 'circle',
+						offset: '0px',
+						auto: true,
+						callback: pulldownRefresh
+					},
+					up: {
+						height:50,//可选.默认50.触发上拉加载拖动距离
+					    auto:true,//可选,默认false.自动上拉加载一次
+					    contentrefresh : "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+					    contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+					    callback: pullupRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					}
+				}
+			});
+
+			/**
+			 *  下拉刷新获取最新列表 
+			 */
+			function pulldownRefresh() {
+
+				if(window.plus && plus.networkinfo.getCurrentType() === plus.networkinfo.CONNECTION_NONE) {
+					plus.nativeUI.toast('似乎已断开与互联网的连接', {
+						verticalAlign: 'top'
+					});
+					return;
+				}
+				if(maxIndex>0) { //说明已有数据，目前处于下拉刷新
+					maxIndex=0;
+				}
+				console.log(pagesize+"   "+maxIndex+"   "+tokenId+"   "+localStorage.getItem("CKID"));
+				//请求最新列表信息流
+				mui.ajax(WMSUrl + "/api/Goods/GetGoodsStock", {
+					dataType: 'JSON',
+					type: 'get',
+					data: {
+						pagesize: pagesize,
+						pageindex: maxIndex,
+						token:tokenId,
+						WareID:localStorage.getItem("CKID"),
+						search:search
+					},
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					showWaiting: true,
+					async: false,
+					success: function(rsp) {
+						mui('#list').pullRefresh().endPulldownToRefresh();
+						if(rsp && rsp.length > 0) {
+							console.log(JSON.stringify(JSON.parse(rsp).Data)); 
+							let result=[];
+							if(Array.isArray(JSON.parse(rsp).Data)){
+								result=JSON.parse(rsp).Data;
+								news.items = result;
+								mui('#list').pullRefresh().refresh(true);
+							}else{
+								news.items = [];
+							}
+							
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast('获取内容失败');
+						//TODO 此处可以向服务端告警
+					}
+				});
+			}
+
+			/**
+			 * 上拉加载拉取历史列表 
+			 */
+			function pullupRefresh() {
+				maxIndex++;
+				console.log(maxIndex);
+				//请求历史列表信息流
+				mui.ajax(WMSUrl + "/api/Goods/GetGoodsStock", {
+					dataType: 'JSON',
+					type: 'get',
+					data: {
+						pagesize: pagesize,
+						pageindex: maxIndex,
+						token:tokenId,
+						WareID:localStorage.getItem("CKID"),
+						search:search
+					},
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					showWaiting: true,
+					async: false,
+					success: function(rsp) {
+						mui('#list').pullRefresh().endPulldownToRefresh();
+						if(rsp && rsp.length > 0) {
+							console.log(rsp);
+							let result=JSON.parse(rsp).Data;
+							console.log("length:"+result.length)
+							if(result.length>0){
+								news.items = [...news.items,...result];
+								if(result.length<pagesize){
+									mui('#list').pullRefresh().endPullupToRefresh(true);
+								}
+							}else{
+								mui('#list').pullRefresh().endPullupToRefresh(true);
+							}
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast('获取内容失败');
+						//TODO 此处可以向服务端告警
+					}
+				});
+			}
+			mui.plusReady(function() {
+				//预加载详情页
+				webview_detail = mui.preload({
+					url: '/pages/query/select/store/detail.html',
+					id: 'detail',
+					styles: {
+						"render": "always",
+						"popGesture": "hide",
+						"bounce": "vertical",
+						"bounceBackground": "",
+						"titleNView": titleNView
+					}
+				});
+			});
+
+			var news = new Vue({
+				el: '#news',
+				data: {
+					items: [] ,//列表信息流数据
+					search:null
+				},
+				methods:{
+					open_detail(item){
+						open_detail(item);
+					},
+					ss(){
+						let aa=this.search;
+						if(aa){
+							pullupRefresh(aa);
+						}else{
+							pulldownRefresh();
+						}
+						console.log(aa+"  asdfa");
+					}
+				}
+			});
+			function pullupRefresh(search) {
+				//请求历史列表信息流
+				mui.ajax(WMSUrl + "/api/Goods/GetGoodsStock", {
+					dataType: 'JSON',
+					type: 'get',
+					data: {
+						pagesize: pagesize,
+						pageindex: 0,
+						token:tokenId,
+						WareID:localStorage.getItem("CKID"),
+						search:search
+					},
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					showWaiting: true,
+					async: false,
+					success: function(rsp) {
+						mui('#list').pullRefresh().endPulldownToRefresh();
+						if(rsp && rsp.length > 0) {
+							console.log(rsp);
+							let result=JSON.parse(rsp).Data;
+							console.log("length:"+result.length);
+							news.items = [...result];
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast('获取内容失败');
+						//TODO 此处可以向服务端告警
+					}
+				});
+			}
+//			/**
+//			 * 打开新闻详情
+//			 * 
+//			 * @param {Object} item 当前点击的新闻对象
+//			 */
+			function open_detail(item) {
+//				触发子窗口变更新闻详情
+				mui.fire(webview_detail, 'get_detail', {
+					Address:item.Address,
+					GoodsName: item.GoodsName,
+					GoodsCode: item.GoodsCode,
+					WARRANTY: item.WARRANTY,
+					InDate: item.InDate,
+					GModel:item.GModel,
+					GoodsSpec:item.GoodsSpec,
+					Qty:item.Qty,
+					Unit:item.Unit,
+					Supplier:item.Supplier,
+					EPC:item.EPC,
+					GoodState:item.GoodState
+				});
+//				更改详情页原生导航条信息
+				titleNView.titleText = item.FlowType+" : "+ item.BusinessCode ;
+				webview_detail.setStyle({
+					"titleNView": titleNView
+				});
+				setTimeout(function() {
+					webview_detail.show("slide-in-right", 300);
+				}, 150);
+			}
+		</script>
+	</body>
+
+</html>

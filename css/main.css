@@ -1,0 +1,124 @@
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.mui-content {
+	background-color: #EEEEEE;
+	height: 100%;
+}
+
+.mui-content-padded {
+	margin: 15px;
+}
+
+.home-banner {
+	width: 100%;
+	height: 170px;
+	box-shadow: #FFFFFF;
+	background: url(../images/banner.png);
+	background-size:cover;
+}
+.home-banner img{
+	padding-top: 70px;
+	width: 250px;
+}
+
+.mui-table-view:before,
+.mui-table-view:after {
+	height: 0;
+}
+
+.mui-grid-view.mui-grid-9{
+	border-top: 1px solid #e9e9e9;
+	border-left: 1px solid #e9e9e9;
+}
+
+.mui-grid-view.mui-grid-9 .mui-table-view-cell{
+	border-bottom: 1px solid #e9e9e9;
+	border-right: 1px solid #e9e9e9;
+}
+
+
+@media (min-width: 800px)
+{
+	.header {
+		width: 100%;
+		height: 300px;
+		/*background-color:#0062CC;*/
+		box-shadow: #FFFFFF;
+		background: url(../images/banner.png);
+		background-size:cover;
+	}
+
+	.header-label img{
+		margin-top: 60px;
+		/*width: 135px;*/
+		height: 52px;
+		padding-left: 0px;
+	}
+
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell{
+		height: 180px;
+		padding: 35px;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell .mui-media-body{
+		margin-top: 15px;
+		height: 18px;
+		line-height: 18px;
+		font-size: 18px;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell .mui-icon{
+		font-size: 3.6em;
+	}
+}
+
+.mui-slider {
+	background-color: #f2f2f2;
+}
+
+/*loading*/
+.mui-spinner-white:after{
+    background-image: url('data:image/svg+xml;charset=utf-8,<svg viewBox=\'0 0 120 120\' xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'><defs><line id=\'l\' x1=\'60\' x2=\'60\' y1=\'7\' y2=\'27\' stroke=\'%23fff\' stroke-width=\'11\' stroke-linecap=\'round\'/></defs><g><use xlink:href=\'%23l\' opacity=\'.27\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(30 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(60 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(90 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(120 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(150 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.37\' transform=\'rotate(180 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.46\' transform=\'rotate(210 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.56\' transform=\'rotate(240 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.66\' transform=\'rotate(270 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.75\' transform=\'rotate(300 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.85\' transform=\'rotate(330 60,60)\'/></g></svg>');
+}
+
+/*select button*/
+.mui-popover {
+	height: 150px;
+}
+
+
+@media (min-width: 800px)
+{
+	/*loading*/
+	.mui-spinner-white:after{
+	    background-image: url('data:image/svg+xml;charset=utf-8,<svg viewBox=\'0 0 120 120\' xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\'><defs><line id=\'l\' x1=\'60\' x2=\'60\' y1=\'7\' y2=\'27\' stroke=\'%23fff\' stroke-width=\'11\' stroke-linecap=\'round\'/></defs><g><use xlink:href=\'%23l\' opacity=\'.27\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(30 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(60 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(90 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(120 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.27\' transform=\'rotate(150 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.37\' transform=\'rotate(180 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.46\' transform=\'rotate(210 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.56\' transform=\'rotate(240 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.66\' transform=\'rotate(270 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.75\' transform=\'rotate(300 60,60)\'/><use xlink:href=\'%23l\' opacity=\'.85\' transform=\'rotate(330 60,60)\'/></g></svg>');
+	}
+	
+	/*select button*/
+	.mui-popover {
+		width: 60%;
+	}
+}
+
+.update {
+	font-style: normal;
+	color: #999999;
+	margin-right: 20px;
+	font-size: 15px
+}
+
+.mui-scroll-wrapper{
+	height: 700px;
+}
+.mui-scroll-empty{text-align: center;}
+		
+.search-row{margin: 5px; }
+.search-row .search-text{background: white; border-radius: 20px; border: solid silver 1px;}
+.search-row .search-title{margin-left: 5px;}
+.search-row .search-btn{float: right; margin-right: 5px;}
+.search-row .search-content{padding: 10px; font-size: 12pt; margin-bottom: 5px;}

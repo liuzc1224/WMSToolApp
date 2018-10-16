@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../../css/mui.picker.min.css" />
+		<link rel="stylesheet" href="../../../../css/main.css" />
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">仓库类型</h1>
+		</header>
+		
+		<div class="mui-content" id="app">
+			<!--列表信息流 开始-->
+			<div id="list" class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell" v-for="content in ckxx" :id="content.id">
+							<a href="javascript:;" class="mui-navigate-right" @tap="deail(content)">
+								{{ content}}
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--列表信息流 结束-->
+		</div>
+		
+		<script type="text/javascript" src="../../../../js/mui.min.js" ></script>
+		<script type="text/javascript" src="../../../../js/mui.picker.min.js" ></script>
+		<script type="text/javascript" src="../../../../js/utils.js" ></script>
+		<script>
+			mui.init();
+			new Vue({
+				el: '#app',
+				data: {
+					ckxx:[]
+				},
+				mounted:function() {
+					let WMSUrl = localStorage.getItem('WMSUrl');
+					axios.get(WMSUrl+ "/api/Basics/GetWare", {
+					    params: {
+					      token: localStorage.getItem('tokenId')
+					    }
+                    }).then((resp)=>{
+						this.bussineId=resp.data;
+						let result=resp.data;
+						this.ckxx=result.Data;
+						function compare(property){
+					         return function(obj1,obj2){
+					             var value1 = obj1[property];
+					             var value2 = obj2[property];
+					             return value1 - value2;     // 升序
+					         }
+					    }
+						this.ckxx = this.ckxx.sort(compare("ID"));
+                    }).catch(resp => {
+                        console.log('请求失败：'+resp.status+','+resp.statusText);
+                    });
+				},
+				methods:{
+					add:function(){
+						let aa={"GoodsId": 0,"GoodsNo":"","GoodsName":"","GoodsCount":0};
+						this.detail.push(aa);
+					},
+					set:function(){
+						let WMSUrl = localStorage.getItem('WMSUrl');
+						axios.get(WMSUrl+ "/api/WareGrn/GetGrnNo", {
+						    params: {
+						      token: localStorage.getItem('tokenId')
+						    }
+	                    }).then((resp)=>{
+							this.bussineId=resp.data;
+	                    }).catch(resp => {
+	                        console.log('请求失败：'+resp.status+','+resp.statusText);
+	                    });
+					},
+				}
+			});
+			
+		</script>
+	</body>
+</html>

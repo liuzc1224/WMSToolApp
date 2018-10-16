@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>超期归还</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../../css/main.css" />
+		<style type="text/css">
+			a{
+				font-size: 1.2em;
+				line-height: 40px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">仓库类型</h1>
+		</header>
+		<div class="mui-content" id="app">
+			<!--列表信息流 开始-->
+			<div id="list" class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell" v-for="content in items" :id="content.id">
+							<a href="javascript:;" class="mui-navigate-right" @tap="deail(content)">
+								{{ content.TypeName }}
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--列表信息流 结束-->
+		</div>
+		<script src="../../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../../js/vue.js"></script>
+		<script type="text/javascript">
+			let WMSUrl = localStorage.getItem('WMSUrl');
+			let tokenId = localStorage.getItem('tokenId');
+			let maxIndex = 0;
+			let pagesize=15;
+			mui.init({
+				pullRefresh: {
+					container: '#list',
+					down: {
+						style: 'circle',
+						offset: '0px',
+						auto: true,
+						callback: pulldownRefresh
+					},
+				}
+			});
+			/**
+			 *  下拉刷新获取最新列表 
+			 */
+			function pulldownRefresh() {
+				if(window.plus && plus.networkinfo.getCurrentType() === plus.networkinfo.CONNECTION_NONE) {
+					plus.nativeUI.toast('似乎已断开与互联网的连接', {
+						verticalAlign: 'top'
+					});
+					return;
+				}
+				if(maxIndex>0){
+					maxIndex=0;
+				}
+				console.log(localStorage.getItem('$WMSAccount')+"   "+maxIndex+"    "+tokenId+"  "+pagesize);
+				//请求最新列表信息流
+				mui.ajax(WMSUrl + "/api/Basics/GetWare", {
+					dataType: 'JSON',
+					type: 'get',
+					data: {
+						token: tokenId
+					},
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					showWaiting: true,
+					async: false,
+					success: function(rsp) {
+						var result = JSON.parse(rsp); 
+						mui('#list').pullRefresh().endPulldownToRefresh();
+						if(rsp && rsp.length > 0) {
+							console.log(JSON.stringify(JSON.parse(rsp).Data)); 
+							let result=[];
+							if(Array.isArray(JSON.parse(rsp).Data)){
+								result=JSON.parse(rsp).Data;
+								function compare(property){
+							         return function(obj1,obj2){
+							             var value1 = obj1[property];
+							             var value2 = obj2[property];
+							             return value1 - value2;     // 升序
+							         }
+							    }
+								result = result.sort(compare("ID"));
+								app.items = result;
+								mui('#list').pullRefresh().refresh(true);
+							}else{
+								app.items = [];
+							}
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast('网络不佳，请稍后重试');
+						console.log(type);
+					}
+				});
+			}
+
+			
+			var app=new Vue({
+				el: '#app',
+				data: {
+					items: [] //列表信息流数据
+				},
+				methods:{
+					deail(item){
+						deail(item);
+					}
+				}
+			});
+			function deail(item) {
+				//获取id
+				if(item != null) {
+					//传值给详情页面，通知加载新数据
+					localStorage.setItem("CKID",item.ID);
+					mui.openWindow({
+						url: '/pages/query/select/store/list.html',
+						id: 'list',
+					});
+				}
+			};
+		</script>
+	</body>
+
+</html>

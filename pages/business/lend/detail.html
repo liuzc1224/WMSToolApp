@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			table{
+				margin: 0 auto;
+				text-align: center;
+				border-collapse: collapse;
+			}
+			table tr{
+				line-height: 40px;
+			}
+			table tr td{
+				border: 1px solid #ccc;
+				overflow:hidden;
+			    text-overflow:ellipsis;
+			    white-space:nowrap
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="main">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">{{FlowType+" : "+ BusinessCode }}</h1>
+			</header>
+			<div class="mui-content">
+				<div id="item1" class="mui-card mui-active">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									订单号
+									<p id="BusinessCode" class='mui-ellipsis mui-pull-right'>{{BusinessCode}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									申请人
+									<p id="Lender" class='mui-ellipsis mui-pull-right'>{{ApplyPerson}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									仓库
+									<p id="LendTime" class='mui-ellipsis mui-pull-right'>{{WareName}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									申请类型
+									<p id="LendTime" class='mui-ellipsis mui-pull-right'>{{OrderTypeName}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									申请时间
+									<p id="LendTime" class='mui-ellipsis mui-pull-right'>{{ApplyTime}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									单据状态
+									<p id="IsAudit" class='mui-ellipsis mui-pull-right'>{{State}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media" v-for="(item,index) in Flows">
+							<a>
+								<div class="mui-media-body">
+									审核人：{{item.AuditPerson}}
+									<p id="IsAudit" class='mui-ellipsis mui-pull-right'>{{item.AuditState}}</p>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<table style="width: 96%;margin: 0 auto;border-collapse: collapse;font-size: 1.1em;">
+					<tr class="firstTr" style="width: 100%;">
+		        		<td style="width: 40%;">批次号</td>
+		        		<td style="width: 40%;">名称</td>
+		        		<td style="width: 20%;">数量</td>
+		        	</tr>
+		        	<tr v-for="(item,index) in content" style="width: 100%;font-size: 0.8em;">
+						<td style="width: 40%;">
+							{{item.GoodsNo}}
+						</td>
+						<td style="width: 40%;">
+							{{item.GoodsName}}
+						</td>
+		        		<td style="width: 20%;">
+		        			{{item.GoodsCount}}
+		        		</td>
+					</tr>
+				</table>
+			</div>
+			<div class="mui-content-padded" v-if="State=='待审批'" style="text-align: center;">
+				<button id='btnAuditNo' @tap="btnAuditNo" class="mui-btn mui-btn-block mui-btn-yellow" style="position:relative;float:left;width:48%;padding:10px;">驳回</button>
+				<button id='btnAudit' @tap="btnAudit" class="mui-btn mui-btn-block mui-btn-blue" style="position:relative;float:left;width:48%;padding:10px;margin-left: 4%;">通过</button>
+			</div>
+		</div>
+
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/vue.js" ></script>
+		<script type="text/javascript" src="../../../js/axios.min.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+			function getDefaultData() {
+				return {
+					ID:"",
+					FlowName:"",
+					OrderTypeName:"",
+					BusinessCode:"",
+					FlowType:"",
+					ApplyPerson:"",
+					ApplyTime:"",
+					Description:"",
+					State:"",
+					Findex:"",
+					Data:"",
+					content:"",
+					WareName:"",
+					Flows:""
+				}
+			}
+
+			var vm = new Vue({
+				el: '#main',
+				data: getDefaultData(),
+				methods: {
+					resetData: function() {//重置数据
+						Object.assign(this.$data, getDefaultData());
+					},
+					btnAuditNo:function(){
+						let content = "是否审批驳回？";
+						let btnArray = ['否', '是'];
+						let id=this.ID;
+						mui.confirm("", content, btnArray, function(e) {
+							if(e.index == 1) {
+								whetherAudit(4,id);
+							}
+						},'div');
+					},
+					btnAudit:function(){
+						let content = "是否审批通过？";
+						let btnArray = ['否', '是'];
+						let id=this.ID;
+						mui.confirm("", content, btnArray, function(e) {
+							if(e.index == 1) {
+								whetherAudit(2,id);
+							}
+						},'div');
+					},
+				}
+			});
+
+			//监听自定义事件，获取新闻详情
+			document.addEventListener('get_detail', function(event) {
+				let WMSUrl = localStorage.getItem('WMSUrl');
+				vm.ID = event.detail.ID;
+				//前页传入的数据，直接渲染，无需等待ajax请求详情后
+				vm.FlowName = event.detail.FlowName,
+				vm.BusinessCode = event.detail.BusinessCode,
+				vm.FlowType = event.detail.FlowType,
+				vm.ApplyPerson = event.detail.ApplyPerson,
+				vm.ApplyTime = event.detail.ApplyTime,
+				vm.Description = event.detail.Description,
+				vm.State = event.detail.State,
+				vm.Findex = event.detail.Findex,
+//				vm.cover = event.detail.cover;
+//				vm.title = event.detail.title; 
+//				vm.author = event.detail.author;
+//				vm.time = event.detail.time;
+				console.log(vm.BusinessCode);
+				//向服务端请求文章详情内容
+				if(vm.FlowType==="出库审批"){
+					axios.get(WMSUrl+ "/api/WareGdn/GetGdnInfoWithFlowByCode", {
+					    params: {
+					      token: localStorage.getItem('tokenId'),
+					      code:vm.BusinessCode
+					    }
+	                }).then(function(resp){
+						let result=resp.data;
+						console.log(JSON.stringify(result));
+						vm.content=result.Data.OrderInfos;
+						vm.OrderTypeName = result.Data.OrderTypeName;
+						vm.WareName = result.Data.WareName;
+						vm.Flows=result.Data.Flows;
+	                }).catch(resp => {
+	                    console.log('请求失败：'+resp.status+','+resp.statusText);
+	                });
+				}else if(vm.FlowType==="入库审批"){
+					axios.get(WMSUrl+ "/api/WareGrn/GetGrnInfoWithFlowByCode", {
+					    params: {
+					      token: localStorage.getItem('tokenId'),
+					      code:vm.BusinessCode
+					    }
+	                }).then(function(resp){
+						let result=resp.data;
+						console.log(JSON.stringify(result));
+						vm.content=result.Data.OrderInfos;
+						vm.OrderTypeName = result.Data.OrderTypeName;
+						vm.WareName = result.Data.WareName;
+						vm.Flows=result.Data.Flows;
+	                }).catch(resp => {
+	                    console.log('请求失败：'+resp.status+','+resp.statusText);
+	                });
+				}
+				console.log(localStorage.getItem('tokenId'));
+			});
+
+			//重写返回逻辑
+			mui.back = function() {
+				plus.webview.currentWebview().hide("auto", 300);
+			}
+			
+			//窗口隐藏时，重置页面数据
+			mui.plusReady(function () {
+				var self = plus.webview.currentWebview();
+				self.addEventListener("hide",function (e) {
+					window.scrollTo(0, 0);
+					vm.resetData();
+				},false);
+			})
+			function whetherAudit(type,id) {
+				console.log(id); 
+				let WMSUrl = localStorage.getItem('WMSUrl');
+				mui.ajax(WMSUrl + "/api/Audit/Audit", {
+					dataType: 'JSON',
+					type: 'get',
+					data: {
+						token:localStorage.getItem('tokenId'),
+						AuditId: id,
+						State: type
+					},
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					showWaiting: true,
+					success: function(data) {
+						console.log(data);
+						let res=JSON.parse(data);
+						console.log(res.Success);
+						if(res.Success===true){
+							if(type===2){
+								plus.nativeUI.toast('审核通过');
+							}else if(type===4){
+								plus.nativeUI.toast('审核驳回');
+							}
+					    }else{
+					    	plus.nativeUI.toast('审核失败');
+					    }
+					    var wobj = plus.webview.getWebviewById('liLend');  
+						if(wobj!=null){  
+						   wobj.reload(true);  
+						} 
+					    mui.back();
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

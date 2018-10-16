@@ -1,0 +1,234 @@
+{
+  "index.html": {
+    "resources": [
+      "css/main.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/iconfont.css",
+      "css/mui.min.css",
+      "images/banner.png",
+      "fonts/iconfont.ttf",
+      "images/default.png",
+      "js/utils.js",
+      "js/jquery.js"
+    ],
+    "refer": [
+      "pages/business/enter/warehousing.html",
+      "pages/query/early/scan/qrcode_scan.html",
+      "pages/query/early/scan/tool.html",
+      "pages/business/out/warehousing.html",
+      "pages/business/lend/list.html",
+      "pages/query/select/out/search.html",
+      "pages/query/select/enter/search.html",
+      "pages/query/select/return/search.html",
+      "pages/business/out/order.html",
+      "pages/query/early/stock/list.html",
+      "pages/query/early/lend/list.html",
+      "pages/query/select/store/search.html",
+      "pages/business/enter/apply.html",
+      "pages/query/early/alarm/list.html",
+      "pages/business/lend/demo.html",
+      "pages/business/enter/detail.html",
+      "pages/business/out/detail.html",
+      "login.html"
+    ]
+  },
+  "login.html": {
+    "resources": [
+      "images/login-acc.png",
+      "js/mui.min.js",
+      "images/login-pwd-1.png",
+      "images/icon.png",
+      "css/mui.min.css",
+      "images/button.png",
+      "fonts/mui.ttf",
+      "js/mui.enterfocus.js"
+    ],
+    "refer": [
+      "index.html"
+    ]
+  },
+  "pages/business/enter/warehousing.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/vue.js",
+      "vue/testData.js"
+    ],
+    "refer": [
+      "pages/business/enter/detail.html"
+    ]
+  },
+  "pages/business/enter/detail.html": {
+    "resources": [
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/business/enter/appiyDetail.html"
+    ]
+  },
+  "pages/query/early/scan/qrcode_scan.html": {
+    "resources": [
+      "css/qrcode.css",
+      "js/qrcode.js"
+    ],
+    "refer": [
+      "pages/business/enter/apply.html",
+      "pages/business/out/order.html"
+    ]
+  },
+  "pages/query/early/scan/tool.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf"
+    ],
+    "refer": []
+  },
+  "pages/query/select/out/search.html": {
+    "resources": [
+      "js/mui.picker.min.js",
+      "css/mui.picker.min.css",
+      "css/main.css",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/query/select/out/detail.html"
+    ]
+  },
+  "pages/business/lend/list.html": {
+    "refer": [
+      "pages/business/lend/detail.html"
+    ],
+    "resources": [
+      "js/vue.js",
+      "css/mui.min.css",
+      "css/main.css"
+    ]
+  },
+  "pages/business/out/order.html": {
+    "resources": [
+      "js/vue.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/business/out/warehousing.html",
+      "pages/query/early/scan/qrcode_scan.html"
+    ]
+  },
+  "pages/business/out/warehousing.html": {
+    "resources": [
+      "vue/testData.js"
+    ],
+    "refer": []
+  },
+  "pages/query/early/stock/list.html": {
+    "resources": [
+      "js/vue.js",
+      "css/mui.min.css",
+      "css/main.css"
+    ],
+    "refer": [
+      "pages/query/early/stock/detail.html"
+    ]
+  },
+  "pages/query/select/store/search.html": {
+    "resources": [
+      "css/main.css",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/query/select/store/detail.html",
+      "pages/query/select/store/list.html"
+    ]
+  },
+  "pages/business/enter/apply.html": {
+    "resources": [
+      "css/mui.min.css",
+      "js/vue.js"
+    ],
+    "refer": [
+      "pages/query/early/scan/qrcode_scan.html"
+    ]
+  },
+  "pages/query/select/return/search.html": {
+    "resources": [
+      "css/main.css",
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "js/mui.picker.min.js"
+    ],
+    "refer": []
+  },
+  "pages/query/select/enter/search.html": {
+    "resources": [
+      "js/mui.picker.min.js",
+      "css/main.css",
+      "css/mui.min.css",
+      "css/mui.picker.min.css"
+    ],
+    "refer": [
+      "pages/query/select/enter/detail.html"
+    ]
+  },
+  "pages/business/lend/detail.html": {
+    "resources": [
+      "css/mui.min.css"
+    ]
+  },
+  "pages/query/early/lend/list.html": {
+    "resources": [
+      "js/vue.js",
+      "css/mui.min.css",
+      "css/main.css"
+    ],
+    "refer": [
+      "pages/query/early/stock/detail.html",
+      "pages/query/early/lend/detail.html"
+    ]
+  },
+  "pages/query/early/stock/detail.html": {
+    "resources": [
+      "css/mui.min.css"
+    ]
+  },
+  "pages/query/early/alarm/list.html": {
+    "resources": [
+      "css/mui.min.css",
+      "js/vue.js",
+      "css/main.css"
+    ],
+    "refer": [
+      "pages/query/early/stock/detail.html",
+      "pages/query/early/alarm/detail.html"
+    ]
+  },
+  "pages/query/early/lend/detail.html": {
+    "resources": [
+      "css/mui.min.css"
+    ]
+  },
+  "pages/query/early/alarm/detail.html": {
+    "resources": [
+      "css/mui.min.css"
+    ]
+  },
+  "pages/business/lend/demo.html": {
+    "refer": [
+      "pages/business/lend/detail.html"
+    ]
+  },
+  "pages/business/out/detail.html": {
+    "refer": [
+      "pages/business/out/orderDetail.html"
+    ]
+  },
+  "pages/query/select/store/list.html": {
+    "refer": [
+      "pages/query/select/store/detail.html"
+    ]
+  }
+}

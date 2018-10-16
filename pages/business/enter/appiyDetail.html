@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			table{
+				margin: 0 auto;
+				text-align: center;
+				border-collapse: collapse;
+			}
+			table tr{
+				width: 100%;
+			}
+			table tr td{
+				border: 1px solid #ccc;
+				overflow:hidden;
+			    text-overflow:ellipsis;
+			    white-space:nowrap;
+			    width: 20%;
+			}
+			label{
+				text-align: right;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="main">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">{{OrderCode}}</h1>
+			</header>
+			<div class="mui-content">
+				<div class="mui-input-group" style="margin-top: 10px;margin-bottom: 10px;">
+					<div class="mui-input-row">
+						<label>仓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;库:</label>
+						<span style="line-height: 40px;">{{WareName}}</span>
+					</div>
+					<div class="mui-input-row">
+						<label>入库类型:</label>
+						<span style="line-height: 40px;">{{OrderTypeName}}</span>
+					</div>
+					<div class="mui-input-row">
+						<label>订单状态:</label>
+						<span style="line-height: 40px;" v-if="OrderState==0 || OrderState==1">待审批</span>
+						<span style="line-height: 40px;" v-if="OrderState==2">待入库</span>
+						<span style="line-height: 40px;" v-if="OrderState==3">已入库</span>
+						<span style="line-height: 40px;" v-if="OrderState==4">驳回</span>
+					</div>
+				</div>
+				<table style="width: 98%;margin: 0 auto;border-collapse: collapse;font-size: 1.1em;">
+					<tr class="firstTr" style="line-height: 40px;">
+		        		<td>批次号</td>
+		        		<td>名称</td>
+		        		<td>数量</td>
+		        		<td>已入库</td>
+		        		<td v-if="OrderState==2">现入库</td>
+		        	</tr>
+		        	<tr v-for="(item,index) in OrderInfos" style="font-size: 0.8em;line-height: 40px;">
+						<td>
+							{{item.GoodsNo}}
+						</td>
+						<td>
+							{{item.GoodsName}}
+						</td>
+		        		<td>
+		        			{{item.GoodsCount}}
+		        		</td>
+		        		<td>
+		        			{{item.AlreadyCount}}
+		        		</td>
+		        		<td v-if="OrderState==2">
+		        			<input type="number" v-model="item.ActualCount" @input="checkNumber(item) " style="margin-top: 10px;width: 90%;" />
+		        		</td>
+					</tr>
+				</table>
+			</div>
+			<div class="mui-content-padded" style="text-align: center;" v-if="OrderState==2">
+				<button @tap='submit' class="mui-btn mui-btn-block mui-btn-blue" style="position:relative;float:left;width:90%;padding:10px;margin-left: 5%;">入库</button>
+			</div>
+		</div>
+
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/vue.js" ></script>
+		<script type="text/javascript" src="../../../js/axios.min.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+			function getDefaultData() {
+				return {
+					OrderType:"",
+					OrderTypeName:"",
+					OrderCode:"",
+					OrderPerson:"",
+					OrderTime:"",
+					WareId:"",
+					WareName:"",
+					OrderState:"",
+					OrderID:"",
+					OrderInfos:"",
+					Flows:""
+				}
+			}
+
+			var vm = new Vue({
+				el: '#main',
+				data: getDefaultData(),
+				methods: {
+					resetData: function() {//重置数据
+						Object.assign(this.$data, getDefaultData());
+					},
+					submit:function(){
+						let WMSUrl = localStorage.getItem('WMSUrl');
+						let dat={
+							"OrderType": this.OrderType,
+						    "OrderTypeName": this.OrderTypeName,
+						    "OrderCode": this.OrderCode,
+						    "OrderPerson": localStorage.getItem('$WMSAccount'),
+						    "OrderTime": this.OrderTime,
+						    "WareId": this.WareId,
+						    "WareName":this.WareName,
+						    "OrderState": this.OrderState,
+						    "OrderID": this.OrderID,
+						    "OrderInfos": this.OrderInfos,
+						    "Flows":this.Flows
+							}
+						console.log(JSON.stringify(dat));
+						let content = "是否确认入库？";
+						let btnArray = ['否', '是'];
+						mui.confirm("", content, btnArray, function(e) {
+							if(e.index == 1) {
+								console.log(JSON.stringify(dat));
+								console.log(JSON.stringify(dat["OrderInfos"]));
+								axios.post(WMSUrl+ "/api/WareGrn/ConfirmWareGrn?token="+localStorage.getItem('tokenId'), 
+									dat
+								)
+								.then(function (response) {
+									let res=response.data;
+								    console.log(JSON.stringify(response.data));
+								    if(res.Success===true){
+								    	plus.nativeUI.toast('提交成功');
+								    	let wobj = plus.webview.getWebviewById('liAllocation');  
+										if(wobj!=null){  
+										   wobj.reload(true);  
+										} 
+								    	mui.back();
+								    }else{
+								    	plus.nativeUI.toast('提交失败');
+								    	let wobj = plus.webview.getWebviewById('liAllocation');  
+										if(wobj!=null){  
+										   wobj.reload(true);  
+										} 
+								    	mui.back();
+								    }
+								})
+								.catch(function (error) {
+								    console.log(error);
+								});
+							}
+						},'div');
+					},
+					checkNumber(item) {
+				        const ActualCount = Number.parseInt(item.ActualCount) || 0
+				        item.ActualCount = ActualCount;
+				        let aa=item.GoodsCount-item.AlreadyCount;
+				        if(item.ActualCount>aa){
+				        	item.ActualCount=aa; 
+				        }
+				    },
+				}
+			});
+
+			//监听自定义事件，获取新闻详情
+			document.addEventListener('get_detail', function(event) {
+				let WMSUrl = localStorage.getItem('WMSUrl');
+				//前页传入的数据，直接渲染，无需等待ajax请求详情后
+				vm.OrderType= event.detail.OrderType;
+				vm.OrderTypeName= event.detail.OrderTypeName;
+				vm.OrderCode= event.detail.OrderCode;
+				vm.OrderPerson= event.detail.OrderPerson;
+				vm.OrderTime= event.detail.OrderTime;
+				vm.WareId= event.detail.WareId;
+				vm.WareName= event.detail.WareName;
+				vm.OrderState= event.detail.OrderState;
+				vm.OrderID= event.detail.OrderID;
+				vm.OrderInfos= event.detail.OrderInfos;
+				vm.Flows=event.detail.Flows;
+			});
+
+			//重写返回逻辑
+			mui.back = function() {
+				plus.webview.currentWebview().hide("auto", 300);
+			}
+			
+			//窗口隐藏时，重置页面数据
+			mui.plusReady(function () {
+				var self = plus.webview.currentWebview();
+				self.addEventListener("hide",function (e) {
+					window.scrollTo(0, 0);
+					vm.resetData();
+				},false);
+			})
+		</script>
+	</body>
+
+</html>

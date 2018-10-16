@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">审批列表</h1>
+		</header>
+
+		<div class="mui-content mui-scroll-wrapper" id="app">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<ul class="mui-table mui-table-view mui-table-view-striped mui-table-view-condensed">
+					<li class="mui-table-view-cell" v-for="content in listData" id= :key="content.id">
+						<div class="mui-table">
+							<div class="mui-table-cell mui-col-xs-9">
+								<h4 class="mui-ellipsis">{{ content.message }}</h4>
+								<h5>{{ content.aduit }}{{ content.time }}</h5>
+							</div>
+							<div class="mui-table-cell mui-col-xs-3 mui-text-right">
+								{{ content.number }}
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/vue.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			new Vue({
+				el: '#app',
+				data: {
+					listData: [{
+							id: '1',
+							message: '手电筒',
+							aduit: '管理员',
+							time: '2018-08-01 16:02:07',
+							number: '10'
+						},
+						{
+							id: '2',
+							message: '螺丝刀',
+							aduit: '管理员',
+							time: '2018-08-01 16:02:07',
+							number: '10'
+						}
+					]
+				}
+			});
+
+//			mui(".mui-table-view").on('tap', '.mui-table-view-cell', function() {
+//				//获取id
+//				var id = this.getAttribute("id");
+//				console.log(id);
+//				if(id != null) {
+//					//传值给详情页面，通知加载新数据
+//					mui.openWindow({
+//						url: '../../../pages/business/lend/detail.html',
+//						id: 'lendDetail',
+//						extras: {
+//							id: id
+//						}
+//					});
+//				}
+//			});
+		</script>
+	</body>
+
+</html>

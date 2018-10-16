@@ -1,0 +1,363 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.firstTr td{
+				border: 1px solid #ccc;
+			}
+		    .mui-scrollbar {
+                display: none !important;
+            }
+            label{
+				text-align: right;
+			}
+			table tr{
+				width: 100%;
+			}
+			table tr td input{
+				margin-top: 12px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">入库申请</h1>
+		</header>
+		<div class="mui-content" id='app' style="text-align: center;width: 100%;">
+			<form class="mui-input-group" style="margin-top: 10px;">
+				<div class="mui-input-row">
+					<label>入库单号:</label>
+					<input id="ToolId" type="text" readonly="readonly" class="mui-input" v-model="bussineId">
+				</div>
+				<div class="mui-input-row">
+					<label>入库类型:</label>
+					<select class="mui-select" v-model="rk">
+						<option disabled value="">请选择入库类型</option>
+						<option v-for="rk in rkType" v-bind:value="rk">
+							{{ rk.TypeName }}
+						</option>
+					</select>
+				</div>
+				<div class="mui-input-row">
+					<label>仓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;库:</label>
+					<select class="mui-select" v-model="ck">
+						<option disabled value="">请选择仓库</option>
+						<option v-for="ck in ckxx" v-bind:value="ck">
+							{{ ck.TypeName }}
+						</option>
+					</select> 
+				</div>
+			</form>
+			<h4 style="line-height: 30px;color: blue;">货物明细</h4>
+			<table style="width: 98%;margin: 0 auto;border-collapse: collapse;font-size: 1.1em;">
+				<tr class="firstTr" style="line-height: 40px;">
+	        		<td style="width: 35%;">批次号</td>
+	        		<td style="width: 35%;">名称</td>
+	        		<td style="width: 15%;">数量</td>
+	        		<td style="width: 15%;">操作</td>
+	        	</tr>
+	        	<tr v-for="(item,index) in detail">
+					<td style="width: 35%;">
+						<input type="text" v-model="item.GoodsNo" style="width: 95%;" />
+					</td>
+					<td style="width: 35%;">
+						<input type="text" v-model="item.GoodsName" style="width: 95%;" />
+					</td>
+	        		<td style="width: 25%;">
+	        			<input type="number" v-model="item.GoodsCount" @input="checkNumber(item) "  style="width: 95%;"/>
+	        		</td>
+					<td style="width: 15%;">
+						<button @click="detail.splice(index,1)">删除</button>
+					</td> 
+				</tr>
+			</table> 
+			<br /> 
+			<button @click="add" style="position: absolute;right: 2%;">添加</button>
+			<br />
+			<br />
+			<br />
+			<div class="row">
+				<button class="mui-btn mui-col-sm-5" @click="sm" style="background-color: #007aff;color: white;font-size: 20px;">扫描</button>
+				<button class="mui-btn mui-col-sm-5" @click="submit" style="background-color: #007aff;color: white;font-size: 20px;">确定</button>
+			</div>
+		</div>
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/vue.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript" src="../../../js/axios.min.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+			new Vue({
+				el: '#app',
+				data: {
+					bussineId:null,
+					detail:[],
+					rk:{},
+					rkType: [],
+					ck:{},
+					ckxx:[]
+				},
+				mounted:function() {
+					if(localStorage.getItem("type")){
+						localStorage.removeItem("type");
+					}
+					if(localStorage.getItem("time")){
+						this.bussineId=localStorage.getItem("time");
+						localStorage.removeItem("time");
+					}else{
+						this.set();
+					}
+					if(localStorage.getItem("bc")){
+						this.rk=JSON.parse(localStorage.getItem("bc"))[0];
+						this.ck=JSON.parse(localStorage.getItem("bc"))[1];
+						localStorage.removeItem("bc");
+					}
+					let rk=this.rkType;
+					let xx=this.ckxx;
+					let newArr=this.detail;
+					let dh=this.bussineId;
+					let WMSUrl = localStorage.getItem('WMSUrl');
+					axios.get(WMSUrl+ "/api/Basics/GetGrnType", {
+					    params: {
+					      token: localStorage.getItem('tokenId')
+					    }
+                    }).then(function(resp){
+						let result=resp.data;
+						for(let i=0; i < result.Data.length; i++){
+							rk.push({"TypeName":result.Data[i].TypeName,"TypeCode":result.Data[i].TypeCode,"ID":result.Data[i].ID});
+						}
+                    }).catch(resp => {
+                        console.log('请求失败：'+resp.status+','+resp.statusText);
+                    });
+					axios.get(WMSUrl+ "/api/Basics/GetWare", {
+					    params: {
+					      token: localStorage.getItem('tokenId')
+					    }
+                    }).then(function(resp){
+						let result=resp.data;
+						for(let i=0; i < result.Data.length; i++){
+							xx.push({"TypeName":result.Data[i].TypeName,"TypeCode":result.Data[i].TypeCode,"ID":result.Data[i].ID});
+						}
+						function compare(property){
+					         return function(obj1,obj2){
+					             var value1 = obj1[property];
+					             var value2 = obj2[property];
+					             return value1 - value2;     // 升序
+					         }
+					    }
+						xx = xx.sort(compare("ID"));
+                    }).catch(resp => {
+                        console.log('请求失败：'+resp.status+','+resp.statusText);
+                    });
+					if(localStorage.getItem("epc")){
+						if(localStorage.getItem("detail")){
+							this.detail=JSON.parse(localStorage.getItem("detail"));
+							console.log(JSON.stringify(this.detail));
+							localStorage.removeItem("detail");
+						}else{
+							this.detail=[];
+						}
+						newArr=this.detail;
+						let epc=localStorage.getItem("epc");
+						localStorage.removeItem("epc");
+						console.log("EPC:"+epc);
+						axios.get(WMSUrl+ "/api/Goods/GetByEPC", {
+						    params: {
+						      "token": localStorage.getItem('tokenId'),
+						      "EPC":epc
+						    }
+	                    }).then(function(resp){
+							let result=resp.data;
+							console.log(JSON.stringify(newArr));
+							let dataxx = result.Data;
+							let aa={"GoodsId": 0,"GoodsNo":epc,"GoodsName":dataxx.GoodsName,"GoodsCount":"1"};
+							console.log(JSON.stringify(this.detail));
+							if(newArr.length>0){
+								let m=0; 
+								for(let j in newArr){
+							        if(newArr[j]["GoodsNo"]===epc){
+							        	newArr[j]["GoodsNo"]=dataxx.EPC;
+							        	newArr[j]["GoodsName"]=dataxx.GoodsName;
+							        	m++;
+							        }
+							    }
+								if(m==0){
+									newArr.push(aa);
+								}
+								console.log(JSON.stringify(newArr));
+							}else{
+								newArr.push(aa);
+								console.log(JSON.stringify(newArr));
+							};
+	                    }).catch(resp => {
+	                        console.log('请求失败：'+resp.status+','+resp.statusText);
+	                    });
+					}
+				},
+				methods:{
+					add:function(){
+						let aa={"GoodsId": 0,"GoodsNo":"","GoodsName":"","GoodsCount":0};
+						this.detail.push(aa);
+					},
+					set:function(){
+						let WMSUrl = localStorage.getItem('WMSUrl');
+						axios.get(WMSUrl+ "/api/WareGrn/GetGrnNo", {
+						    params: {
+						      token: localStorage.getItem('tokenId')
+						    }
+	                    }).then((resp)=>{
+	                    	console.log(JSON.stringify(resp));
+							this.bussineId=resp.data;
+	                    }).catch(resp => {
+	                        console.log('请求失败：'+resp.status+','+resp.statusText);
+	                    });
+					},
+					submit:function(){
+						let WMSUrl = localStorage.getItem('WMSUrl');
+						if(this.detail.length>0){
+							let newArr=this.detail;//去除空对象
+							let n=0;
+							let arr1=[];
+							for(let j in newArr){
+								let m=0;
+						        if(newArr[j]["GoodsNo"]!='' && newArr[j]["GoodsCount"]>0){
+						        	m++;
+						        }
+							    if(m==0){
+							    	arr1.unshift(j);
+							    }else{
+							    	n++; 
+							    };
+							};
+							if(n==0){
+								this.detail=[];
+								plus.nativeUI.toast('货物信息不能为空');
+							}
+							else{
+//								console.log(JSON.stringify(arr1));
+								for(let k=0;k<arr1.length;k++){
+									this.detail.splice(arr1[k],1);
+								}
+							}
+							if(JSON.stringify(this.rk)==="{}"){
+								plus.nativeUI.toast('入库类型不能为空');
+							}else{
+								if(JSON.stringify(this.ck)==="{}"){
+									plus.nativeUI.toast('仓库不能为空');
+								}else{
+									if(this.detail.length===0){
+										plus.nativeUI.toast('货物不能为空');
+									}else{
+										let dat={
+											"OrderType": this.rk.ID,
+										    "OrderTypeName": this.rk.TypeName,
+										    "OrderCode": this.bussineId,
+										    "OrderPerson": localStorage.getItem('$WMSAccount'),
+										    "OrderTime": (new Date()).format("yyyy-MM-dd hh:mm:ss"),
+										    "WareId": this.ck.ID,
+										    "OrderState": 0,
+										    "OrderID": 0,
+										    "OrderInfos": this.detail
+										}
+										let btnArray = ['否','是'];
+//										let s="";
+//										for(let i=0;i<newArr.length;i++){
+//											s+=newArr[i]["GoodsNo"]+"  :  "+newArr[i]["GoodsCount"]
+//										}
+//										let html="<br /><div class='row'>"+s+"</div>";
+										mui.confirm("", '是否提交', btnArray,function(e) {
+											if (e.index == 1) {
+												console.log(JSON.stringify(dat));
+												console.log(JSON.stringify(dat["OrderInfos"]));
+												console.log(localStorage.getItem('tokenId'));
+												axios.post(WMSUrl+ "/api/WareGrn/PostWareGrn?token="+localStorage.getItem('tokenId'), 
+													dat
+												)
+												.then(function (response) {
+													let res=response.data;
+												    console.log(JSON.stringify(response.data));
+												    if(res.Success===true){
+												    	plus.nativeUI.toast('提交成功');
+												    }else{
+												    	plus.nativeUI.toast('提交失败');
+												    }
+												    mui.back();
+												})
+												.catch(function (error) {
+												    console.log(error);
+												});
+											}
+					        			},'div');
+									}
+								}
+							}
+						}
+						else{
+							plus.nativeUI.toast('货物信息不能为空');
+						}
+					},
+					sm:function(){
+						let bc=[this.rk,this.ck];
+						localStorage.setItem("type","入库");
+						localStorage.setItem("bc",JSON.stringify(bc));
+						localStorage.setItem("time",this.bussineId);
+						let Arr=this.detail;//去除空对象
+						let n=0;
+						let arr1=[];
+						for(let j in Arr){
+							let m=0;
+					        if(Arr[j]["GoodsNo"]!='' && Arr[j]["GoodsCount"]>0){
+					        	m++;
+					        }
+						    if(m==0){
+						    	arr1.unshift(j);
+						    }else{
+						    	n++; 
+						    };
+						};
+						if(n>0){
+							for(let k=0;k<arr1.length;k++){
+								Arr.splice(arr1[k],1);
+							}
+							console.log(JSON.stringify(this.detail));
+							localStorage.setItem("detail",JSON.stringify(this.detail));
+							mui.openWindow({
+								id: 'qrcode_scan',
+								url: '../../query/early/scan/qrcode_scan.html',
+								show: {
+									aniShow: 'pop-in'
+								},
+								waiting: {
+									autoShow: false
+								}
+							});
+						}else{
+							mui.openWindow({
+								id: 'qrcode_scan',
+								url: '../../query/early/scan/qrcode_scan.html',
+								show: {
+									aniShow: 'pop-in'
+								},
+								waiting: {
+									autoShow: false
+								}
+							});
+						}
+					},
+					checkNumber(item) {
+				        const GoodsCount = Number.parseInt(item.GoodsCount) || 0
+				        item.GoodsCount = GoodsCount;
+				    },
+				}
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../../css/mui.min.css" />
+	</head>
+	<body id="app">
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">库存信息</h1>
+		</header>
+		
+		<div class="mui-content detail-item" id="main">
+			<div id="item1" class="mui-card mui-control-content mui-active">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media" v-if="Address">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;仓库名称：
+								<p class='mui-ellipsis mui-pull-right'>{{Address}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="GoodsCode">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;物资编码：
+								<p class='mui-ellipsis mui-pull-right'>{{GoodsCode}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="GoodsName">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;物资名称:
+								<p class='mui-ellipsis mui-pull-right'>{{GoodsName}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="Qty">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;库存量:
+								<p class='mui-ellipsis mui-pull-right'>{{Qty}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="InDate">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;入库时间:
+								<p class='mui-ellipsis mui-pull-right'>{{InDate}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="GModel">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;物资型号:
+								<p class='mui-ellipsis mui-pull-right'>{{GModel}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="GoodsSpec">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;物资规格:
+								<p class='mui-ellipsis mui-pull-right'>{{GoodsSpec}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="WARRANTY">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;质保期:
+								<p class='mui-ellipsis mui-pull-right'>{{WARRANTY}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="Supplier">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;供应商:
+								<p class='mui-ellipsis mui-pull-right'>{{Supplier}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="EPC">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;&nbsp;&nbsp;EPC编号:
+								<p class='mui-ellipsis mui-pull-right'>{{EPC}}</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media" v-if="GoodState">
+						<a>
+							<div class="mui-media-body">
+								&nbsp;&nbsp;物资状态:
+								<p class='mui-ellipsis mui-pull-right'>{{GoodState}}</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../../js/vue.js"></script>
+		<script type="text/javascript" src="../../../../js/mui.min.js" ></script>
+		<script type="text/javascript" src="../../../../js/axios.min.js" ></script>
+		<script>
+			mui.init();
+			function getDefaultData() {
+				return {
+					Address:"",
+					GoodsName: "",
+					GoodsCode: "",
+					WARRANTY: "",
+					InDate: "",
+					GModel:"",
+					GoodsSpec:"",
+					Qty:"",
+					Unit:"",
+					Supplier:"",
+					EPC:"",
+					GoodState:""
+				}
+			}
+
+			var vm = new Vue({
+				el: '#main',
+				data: getDefaultData(),
+				methods: {
+					resetData: function() {//重置数据
+						Object.assign(this.$data, getDefaultData());
+					},
+				}
+			});
+
+			//监听自定义事件，获取新闻详情
+			document.addEventListener('get_detail', function(event) {
+				//前页传入的数据，直接渲染，无需等待ajax请求详情后
+				vm.Address= event.detail.Address;
+				vm.GoodsName= event.detail.GoodsName;
+				vm.GoodsCode= event.detail.GoodsCode;
+				vm.WARRANTY= event.detail.WARRANTY;
+				vm.InDate= event.detail.InDate;
+				vm.GModel= event.detail.GModel;
+				vm.GoodsSpec= event.detail.GoodsSpec;
+				vm.Qty= event.detail.Qty;
+				vm.Unit= event.detail.Unit;
+				vm.Supplier= event.detail.Supplier;
+				vm.EPC= event.detail.EPC;
+				vm.GoodState= event.detail.GoodState;
+			});
+
+			//重写返回逻辑
+			mui.back = function() {
+				plus.webview.currentWebview().hide("auto", 300);
+			}
+			
+			//窗口隐藏时，重置页面数据
+			mui.plusReady(function () {
+				var self = plus.webview.currentWebview();
+				self.addEventListener("hide",function (e) {
+					window.scrollTo(0, 0);
+					vm.resetData();
+				},false);
+			})
+		</script>
+	</body>
+</html>

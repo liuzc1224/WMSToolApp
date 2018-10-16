@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/iconfont.css" rel="stylesheet" />
+		<link href="css/main.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" href="#tabbar">
+				<span class="mui-icon mui-icon-chatbubble"></span>
+				<span class="mui-tab-label">查询</span>
+			</a>
+			<a class="mui-tab-item" href="#tabbar-business">
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">业务</span>
+			</a>
+			<a class="mui-tab-item" href="#tabbar-with-my">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">功能列表</h1>
+		</header>
+		<div class="mui-content" style="position: absolute; top: 0;bottom: 0;left: 0;right: 0;">
+			<div id="tabbar" class="mui-control-content mui-active">
+				<div class="home-banner">
+				</div>
+				<div id="gallery" class="mui-slider">
+					<ul class="mui-table-view mui-grid-view mui-grid-9" id="main">
+						<li id="liStock" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<p class="mui-badge mui-badge-danger" style="position:absolute;margin-top: -30px;float: right;z-index: 100;background: rgba(255,0,0,0.4);" v-if="Stock!=null && Stock!=0">{{Stock}}</p>
+							<a href="#">
+								<span id="spanStockAlarm" class="mui-icon iconfont icon-expired" style="color: #EC971F;">
+								</span> 
+								<div class="mui-media-body">库存预警</div>
+							</a>
+						</li>
+						<li id="liLendTerm" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<p class="mui-badge mui-badge-danger" style="position:absolute;margin-top: -30px;float: right;z-index: 100;background: rgba(255,0,0,0.6);" v-if="Overdue!=null && Overdue!=0">{{Overdue}}</p>
+							<a href="#">
+								<span id="spanLendTermAlarm" class="mui-icon iconfont icon-chaoqiweiguihuan" style="color: #EC971F;"></span>
+								<div class="mui-media-body">超期归还</div>
+							</a>
+						</li>
+						<li id="liAlarm" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<p class="mui-badge mui-badge-danger" style="position:absolute;margin-top: -30px;float: right;z-index: 100;background: rgba(255,0,0,1);" v-if="Abnormal!=null && Abnormal!=0">{{Abnormal}}</p>
+							<a href="#">
+								<span id="spanAlarm" class="mui-icon iconfont icon-gaojingxinxi" style="color: #EC971F;"></span>
+								<div class="mui-media-body">异常告警</div>
+							</a>
+						</li>
+						<li id="liScan" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<a href="#">
+								<span class="mui-icon iconfont icon-saoma" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">扫码查询</div>
+							</a>
+						</li>
+						<li id="liOutTreasury" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<a href="#">
+								<span class="mui-icon iconfont icon-chukuchaxun" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">出库查询</div>
+							</a>
+						</li>
+						<li id="liEnterTreasury" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<a href="#">
+								<span class="mui-icon iconfont icon-rukuchaxun" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">入库查询</div>
+							</a>
+						</li>
+						<li id="liStore" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<a href="#">
+								<span class="mui-icon iconfont icon-kucunchaxun" style="color: #10A6E2;"></span>
+								<div class="mui-media-body">库存查询</div>
+							</a>
+						</li>
+						<li id="liReturn" class="mui-table-view-cell mui-media mui-col-sm-4 mui-col-xs-4" >
+							<a href="#">
+								<span class="mui-icon iconfont icon-huan" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">归还查询</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="tabbar-business" class="mui-control-content">
+				<div id="gallery" class="mui-slider">
+					<ul class="mui-table-view mui-grid-view mui-grid-9">
+						<li id="liLend" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-shenpi" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">审批</div>
+							</a>
+						</li>
+						<li id="liInitEnter" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-rukushenqing" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">入库申请</div>
+							</a>
+						</li>
+						<li id="liAllocation" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-ru" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">入库</div>
+							</a>
+						</li>
+						<li id="liBackApply" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-chukushenqing" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">出库申请</div>
+							</a>
+						</li>
+						<li id="liBack" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-chu" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">出库</div>
+							</a>
+						</li>
+						<!--<li id="liBorrowBack" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-huan" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">借用出库</div>
+							</a>
+						</li>
+						<li id="liSpecialBack" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-huan" style="color: #00bb9c;"></span>
+								<div class="mui-media-body">特殊出库</div>
+							</a>
+						</li>-->
+						<!--<li id="liHelper" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+								<a href="#">
+									<span class="mui-icon mui-icon-help" style="color: #10A6E2;"></span>
+									<div class="mui-media-body">工具助手</div>
+								</a>
+							</li>-->
+						<li id="liRobotApply" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span class="mui-icon iconfont icon-pankuguanli" style="color: #10A6E2;"></span>
+								<div class="mui-media-body">机器人盘库</div>
+							</a>
+						</li>
+						<li id="liRobotAudit" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+							<a href="#">
+								<span id="ToolAudit" class="mui-icon iconfont icon-banyunzuoye" style="color: #10A6E2;"></span>
+								<div class="mui-media-body">机器人搬运</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="tabbar-with-my" class="mui-control-content">
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 25px;">
+					<li class="mui-table-view-cell mui-media">
+						<a id="aUser" class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="images/default.png">
+							<div class="mui-media-body">
+								<span id="kUserName"></span>
+								<p id="kAccount" class='mui-ellipsis'></p>
+							</div>
+						</a>
+					</li>
+				</ul>
+
+				<ul class="mui-table-view" style="margin-top: 25px;">
+					<li class="mui-table-view-cell">
+						<a id="liTools" class="mui-navigate-right">
+							搜索工具
+						</a>
+					</li>
+				</ul>
+				<ul class="mui-table-view" style="margin-top: 25px;">
+					<li class="mui-table-view-cell">
+						<a id="aChange" class="mui-navigate-right">
+							修改密码
+						</a>
+					</li>
+				</ul>
+				<ul class="mui-table-view" style="margin-top: 25px;">
+					<li class="mui-table-view-cell">
+						<a id="liHelper" class="mui-navigate-right">
+							工具助手
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a id="liDoc" class="mui-navigate-right">
+							使用说明
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a id="about" class="mui-navigate-right">
+							功能介绍
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a id="aUpdate" class="mui-navigate-right">
+							版本更新 <i class="mui-pull-right update" id="iversion"></i>
+						</a>
+					</li>
+				</ul>
+				<ul class="mui-table-view" style="margin-top: 25px;">
+					<li class="mui-table-view-cell">
+						<a id="exit" style="text-align: center;color: #FF3B30;">
+							退出
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript" src="js/utils.js" ></script>
+	<script type="text/javascript" src="js/jquery.js" ></script>
+	<script type="text/javascript" src="js/vue.js" ></script>
+	<script type="text/javascript" src="js/axios.min.js" ></script>
+	<script type="text/javascript" src="js/app.js" ></script>
+	<script>
+		mui.init({
+			gestureConfig:{
+				swipe:true
+			}
+		});
+		new Vue({
+			el: '#main',
+			data:{
+				Stock:"",
+				Overdue:"",
+				Abnormal:"",
+			},
+			mounted:function() {
+				let WMSUrl = localStorage.getItem('WMSUrl');
+				console.log(localStorage.getItem('tokenId'));
+				axios.get(WMSUrl+ "/api/Message/GetWaitForNum", {
+				    params: {
+				      token: localStorage.getItem('tokenId')
+				    }
+                }).then(resp=> {
+					var result=resp.data.Data;
+					this.Stock=result.Stock;
+					this.Overdue=result.Overdue;
+					this.Abnormal=result.Abnormal;
+					console.log(JSON.stringify(result));
+                }).catch(resp => {
+                    console.log('请求失败：'+resp.status+','+resp.statusText);
+                });
+			},
+		});
+		mui.plusReady(function() {
+			ws = plus.webview.currentWebview();
+			var TokenId = ws.TokenId;
+			console.log(TokenId);
+			var WMSUrl = localStorage.getItem('WMSUrl')
+			dataList(TokenId, WMSUrl); //获取权限列表
+
+			bindNavigation('liStock', 'pages/query/early/stock/list.html'); //库存预警
+			bindNavigation('liLendTerm', 'pages/query/early/lend/list.html'); //超期提醒
+			bindNavigation('liAlarm', 'pages/query/early/alarm/list.html'); //异常警告
+			//bindNavigation('liScan', 'pages/query/select/scan/list.html'); //扫描查询
+			bindNavigation('liOutTreasury', 'pages/query/select/out/search.html'); //出库查询
+			bindNavigation('liEnterTreasury', 'pages/query/select/enter/search.html'); //入库查询
+			bindNavigation('liStore', 'pages/query/select/store/search.html'); //库存查询
+			bindNavigation('liReturn', 'pages/query/select/return/search.html'); //归还查询
+
+			bindNavigation('liLend', 'pages/business/lend/list.html'); //审批list
+			bindNavigation('liInitEnter', 'pages/business/enter/apply.html'); //入库申请
+			bindNavigation('liAllocation', 'pages/business/enter/detail.html'); //入库
+			bindNavigation('liBack', 'pages/business/out/detail.html'); //出库
+			bindNavigation('liBackApply', 'pages/business/out/order.html')//出库申请
+			//			bindNavigation('liBorrowBack', 'pages/business/out/warehousing.html'); //借用出库
+			//			bindNavigation('liSpecialBack', 'pages/business/out/warehousing.html'); //特殊出库
+			bindNavigation('liRobotApply', 'pages/business/robot/'); //机器人盘库
+			bindNavigation('liRobotAudit', 'pages/business/rotbot/'); //机器人搬运
+			function bindNavigation(id, url, type) {
+				document.getElementById(id).addEventListener('tap', function(event) {
+					mui.openWindow({
+						url: url,
+						id: id,
+						extras: {
+							type: type
+						}
+					});
+				});
+			}
+		});
+		var listClass = {
+			'APP_WAREWarning': 'liStock',
+			'APP_Overdue': 'liLendTerm',
+			'APP_Abnormal': 'liAlarm',
+			'APP_Scan': 'liScan',
+			'APP_WareGdnSearch': 'liOutTreasury',
+			'APP_WareGrnSearch': 'liEnterTreasury',
+			'APP_WareSearch': 'liStore',
+			'APP_ReturnSearch': 'liReturn',
+			'APP_Audit': 'liLend',
+			'APP_Initialware': 'liInitEnter',
+			'APP_Allocation': 'liAllocation',
+			'APP_WareGdn': 'liBack',
+			'APP_RobotCheck': 'liRobotApply',
+			'APP_RobotCarry': 'liRobotAudit'
+		};
+
+		function dataList(TokenId, WMSUrl) {
+			mui.ajax(WMSUrl + '/api/Login/GetRole', {
+				dataType: 'JSON',
+				type: 'get',
+				data: {
+					token: TokenId
+				},
+				timeout: 10000,
+				showWaiting: true,
+				success: function(data) {
+					var result = JSON.parse(data);
+					var {
+						Data
+					} = result;
+					console.log(Data);
+					if(Data.length > 0) {
+						var array = [];
+						for(var i=0; i< Data.length;i++){
+							array.push(listClass[Data[i]]);
+						}
+						var array2 = [];
+						for(var data in listClass){
+							array2.push(listClass[data]);
+						}
+						var result = diff(array, array2);
+						console.log(result);
+						if(result.length > 0){
+							for(var i = 0; i < result.length; i++){
+								$('#'+result[i]).remove();	
+							}
+						}
+					}
+				}
+			});
+		}
+
+		document.getElementById("liScan").addEventListener("tap", function(e) {
+			open();
+		});
+		function open(){
+			mui.openWindow({
+				id: 'qrcode_scan',
+				url: 'pages/query/early/scan/qrcode_scan.html',
+				show: {
+					aniShow: 'pop-in'
+				},
+				waiting: {
+					autoShow: false
+				}
+			});
+		}
+		function isscaned(t, r, f) {
+			console.log(r);
+			mui.openWindow({
+				url: 'pages/query/early/scan/tool.html',
+				id: 'scan',
+				extras: {
+					epc: r
+				}
+			});
+		}
+		//退出操作******************
+		document.getElementById('exit').addEventListener('tap', function() {
+			if (mui.os.ios) {
+				app.setState({});
+				mui.openWindow({
+					url: 'login.html',
+					id: 'login',
+					show: {
+						aniShow: 'pop-in'
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+				return;
+			}
+			var btnArray = [{
+				title: "注销当前账号"
+			}, {
+				title: "直接关闭应用"
+			}];
+			plus.nativeUI.actionSheet({
+				cancel: "取消",
+				buttons: btnArray
+			}, function(event) {
+				var index = event.index;
+				switch (index) {
+					case 1:
+						//注销账号
+						localStorage.removeItem("login");
+						app.setState({});
+						/*
+						 * 注意：
+						 * 1、因本示例应用启动页就是登录页面，因此注册成功后，直接显示登录页即可；
+						 * 2、如果真实案例中，启动页不是登录页，则需修改，使用mui.openWindow打开真实的登录页面
+						 */
+						// 获取所有Webview窗口
+						var curr = plus.webview.currentWebview();
+						var wvs = plus.webview.all();
+						for (var i = 0, len = wvs.length; i < len; i++) {
+                            //关闭除setting页面外的其他页面
+							if (wvs[i].getURL() == curr.getURL())
+								continue;
+							plus.webview.close(wvs[i]);
+						}
+                        //打开login页面后再关闭setting页面
+						plus.webview.open('/login.html');
+						curr.close();
+//						plus.webview.getLaunchWebview().show("pop-in");
+						//若启动页不是登录页，则需通过如下方式打开登录页
+//						mui.openWindow({
+//							url: 'login.html',
+//							id: 'login',
+//							show: {
+//								aniShow: 'pop-in'
+//							}
+//						});
+						break;
+					case 2:
+						plus.runtime.quit();
+						break;
+				}
+			});
+		}, false);
+		var Index=0;
+		//左滑
+		window.addEventListener("swipeleft", function(event) {
+			Index++;
+			if(Index>2){
+				Index=0;
+			}
+			console.log(Index);
+			setIndex(Index);
+        });
+        //右滑
+        window.addEventListener("swiperight", function(event) {
+			Index--;
+			if(Index<0){
+				Index=2;
+			}
+			console.log(Index);
+			setIndex(Index);
+        });
+        function setIndex(data){
+        	console.log(data);
+        	$(".mui-control-content").removeClass("mui-active");
+    		$(".mui-tab-item").removeClass("mui-active");
+    		$(".mui-tab-item").eq(data).addClass("mui-active");
+    		$(".mui-control-content").eq(data).addClass("mui-active");
+        }
+	</script>
+</html>

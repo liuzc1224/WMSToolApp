@@ -1,0 +1,222 @@
+<!doctype html>
+<html class="ui-page-login">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-content {
+				padding: 0;
+				margin: 0;
+			}
+			
+			.area {
+				margin: 20px auto 0px auto;
+			}
+			
+			.mui-input-group {
+				margin-top: 10px;
+			}
+			
+			.mui-input-group:first-child {
+				margin-top: 20px;
+			}
+			
+			.mui-input-group label {
+				width: 32%;
+			}
+			
+			.mui-input-row label~input,
+			.mui-input-row label~select,
+			.mui-input-row label~textarea {
+				width: 68%;
+			}
+			
+			.mui-checkbox input[type=checkbox],
+			.mui-radio input[type=radio] {
+				top: 6px;
+			}
+			
+			.mui-content-padded {
+				margin-top: 25px;
+			}
+			
+			.mui-btn {
+				padding: 10px;
+			}
+			
+			.link-area {
+				display: block;
+				margin-top: 25px;
+				text-align: center;
+			}
+			
+			.spliter {
+				color: #bbb;
+				padding: 0px 8px;
+			}
+			
+			.oauth-area {
+				position: absolute;
+				bottom: 20px;
+				left: 0px;
+				text-align: center;
+				width: 100%;
+				padding: 0px;
+				margin: 0px;
+			}
+			
+			.oauth-area .oauth-btn {
+				display: inline-block;
+				width: 50px;
+				height: 50px;
+				background-size: 30px 30px;
+				background-position: center center;
+				background-repeat: no-repeat;
+				margin: 0px 20px;
+				/*-webkit-filter: grayscale(100%); */
+				border: solid 1px #ddd;
+				border-radius: 25px;
+			}
+			
+			.oauth-area .oauth-btn:active {
+				border: solid 1px #aaa;
+			}
+			
+			.oauth-area .oauth-btn.disabled {
+				background-color: #ddd;
+			}
+			/*#inputlogin{
+				border: 1px solid #CCCCCC;
+				margin-top: 8%;
+				width: 90%;
+				margin-left: 5%;
+			}*/
+		</style>
+
+	</head>
+
+	<body onresize="document.activeElement.scrollIntoView(true);">
+		<div class="mui-content" style="margin-top: -10px">
+			<!--<img src="images/login.png" width="100%" />-->
+			<img src="images/icon.png" width="100%" />
+			<div class="mui-card" style="border-radius:10px;margin-top: -32%;height: 300px;padding-top: 5%;">
+				<p style="text-align: center;color: black;font-size: 30px; ">登录</p>
+				<form id='login-form' class="mui-input-group login-form">
+					<div class="mui-card" style="height:45px;border-radius: 10px;">
+						<div class="mui-input-row mui-left">
+							<label><img src="images/login-acc.png" width="35%" id="loginImg"/></label>
+							<input type="text" class="mui-input-clear mui-input" id="account" style="height:50px" placeholder="请输入账号">
+						</div>
+					</div>
+					<div class="mui-card" style="height:45px;margin-top: 8%;border-radius: 10px;">
+						<div class="mui-input-row mui-left">
+							<label><img src="images/login-pwd-1.png" width="35%" id="pwdImg"/></label>
+							<input type="password" class="mui-input-clear mui-input" id="password" placeholder="请输入密码">
+						</div>
+					</div>
+				</form>
+				<div id="login" class="mui-content-padded mui-card-content">
+					<img src="images/button.png" style="width: 100%;" />
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/mui.enterfocus.js" ></script>
+		<script>
+			mui.init();
+			var WMSUrl = 'http://192.168.9.100:10001/api/Login/LoginOn';
+//			var WMSUrl = 'http://106.15.201.251:10001/api/Login/LoginOn';
+			mui.plusReady(function() {
+				localStorage.setItem('WMSUrl', 'http://192.168.9.100:10001');
+//				localStorage.setItem('WMSUrl', 'http://106.15.201.251:10001');
+				bindLogin();
+				if(localStorage.getItem("login")){
+					autoLogin();
+				}
+			});
+
+			function bindLogin() {
+				var loginButton = document.getElementById('login');
+				var eleaccount = document.getElementById('account');
+				var elepassword = document.getElementById('password');
+				loginButton.addEventListener('tap', function(event) {
+					if(eleaccount.value.length < 1) {
+						return plus.nativeUI.toast('请输入用户名');
+					}
+					if(elepassword.value.length < 1) {
+						return plus.nativeUI.toast('请输入密码');
+					}
+
+					loginHelper(eleaccount.value, elepassword.value);
+				});
+				mui.enterfocus('.login-form input', function() {
+					mui.trigger(loginButton, 'tap');
+				});
+			}
+
+			function autoLogin() {
+				var $account = localStorage.getItem("$WMSAccount");
+				var $password = localStorage.getItem("$WMSPassword");
+				if($account.length > 0 && $password.length > 0) {
+					document.getElementById('account').value = $account;
+					document.getElementById('password').value = $password;
+					console.log($account+", "+$password);
+					loginHelper($account, $password);
+				}
+			}
+
+			function loginHelper(account, password) {
+				mui.ajax(WMSUrl, {
+					dataType:'JSON',
+					type: 'get',
+					data: {
+						strUser: account,
+						strPwd: password,
+					},
+					timeout: 10000,
+					showWaiting: true,
+					success: function(data) {
+						var result = JSON.parse(data);
+						console.log(data);
+						let {Success,TokenId} = result;
+						console.log(Success+"  "+TokenId)
+						if( Success == true){
+							localStorage.setItem('$WMSAccount',account);
+							localStorage.setItem('$WMSPassword',password);
+							localStorage.setItem("login",account);
+							localStorage.setItem('tokenId',TokenId);
+							setTimeout(function() {
+								mui.openWindow({
+									url: 'index.html',
+									id: 'index',
+									extras:{
+										TokenId: TokenId
+									}
+								});
+							}, 150);
+						}else{
+							plus.nativeUI.toast('账号或密码错误');
+						}
+					}
+				});
+				
+			}
+			var backButtonPress = 0;
+			mui.back = function(event) {
+				backButtonPress++;
+				if (backButtonPress > 1) {
+					plus.runtime.quit();
+				} else {
+					plus.nativeUI.toast('再按一次退出应用');
+				}
+				setTimeout(function() {
+					backButtonPress = 0;
+				}, 1000);
+				return false;
+			};
+		</script>
+	</body>
+</html>

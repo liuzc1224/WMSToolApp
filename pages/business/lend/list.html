@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>审核</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<style type="text/css">
+			.mui-media {
+				font-size: 14px;
+			}
+			.mui-table-view:before,
+			.mui-table-view:after {
+				height: 0;
+			}
+			
+			.mui-content>.mui-table-view:first-child {
+				margin-top: 1px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">审批列表</h1>
+		</header>
+		<div class="mui-content" id="news">
+			<!--列表信息流 开始-->
+			<div id="list" class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell" v-for="item in items">
+							<a href="javascript:;" :data-ID="item.ID" @tap="open_detail(item)">
+								<div class="mui-media-body" style="padding-bottom: 10px;">
+									<h4 class="mui-ellipsis mui-col-xs-12">{{item.FlowType}} : {{ item.BusinessCode }}</h4>
+									<h5 style="text-align: center;position: absolute;margin-top: 10px;">{{ item.ApplyPerson }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ item.ApplyTime }}</h5>
+									<h4 style="text-align: right;position: relative;">{{ item.State }}</h4>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--列表信息流 结束-->
+		</div>
+
+		<script type="text/javascript" src="../../../js/mui.min.js" ></script>
+		<script type="text/javascript" src="../../../js/vue.js" ></script>
+		<script type="text/javascript">
+			var webview_detail = null; //详情页webview
+			var titleNView = { //详情页原生导航配置
+				backgroundColor: '#f7f7f7', //导航栏背景色
+				titleText: '', //导航栏标题
+				titleColor: '#000000', //文字颜色
+				type: 'transparent', //透明渐变样式
+				autoBackButton: true, //自动绘制返回箭头
+				splitLine: { //底部分割线
+					color: '#cccccc'
+				}
+			}
+			let tokenId = localStorage.getItem('tokenId');
+			console.log(tokenId);
+			let WMSUrl = localStorage.getItem('WMSUrl');
+			let maxIndex = 0;
+			let pagesize=15;
+			//mui初始化，配置下拉刷新
+			mui.init({
+				pullRefresh: {
+					container: '#list',
+					down: {
+						style: 'circle',
+						offset: '0px',
+						auto: true,
+						callback: pulldownRefresh
+					},
+					up: {
+						height:50,//可选.默认50.触发上拉加载拖动距离
+					    auto:true,//可选,默认false.自动上拉加载一次
+					    contentrefresh : "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+					    contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+					    callback: pullupRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					}
+				}
+			});
+
+			/**
+			 *  下拉刷新获取最新列表 
+			 */
+			function pulldownRefresh() {
+
+				if(window.plus && plus.networkinfo.getCurrentType() === plus.networkinfo.CONNECTION_NONE) {
+					plus.nativeUI.toast('似乎已断开与互联网的连接', {
+						verticalAlign: 'top'
+					});
+					return;
+				}
+				if(maxIndex>0) { //说明已有数据，目前处于下拉刷新
+					maxIndex=0;
+				}
+				console.log(maxIndex);
+				//请求最新列表信息流
+				mui.ajax(WMSUrl + "/api/Audit/FlowList", {
+					dataType: 'JSON',
+					type: 'get',
+					data: {
+						pagesize: pagesize,
+						pageindex: maxIndex,
+						token:tokenId
+					},
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					showWaiting: true,
+					async: false,
+					success: function(rsp) {
+						mui('#list').pullRefresh().endPulldownToRefresh();
+						if(rsp && rsp.length > 0) {
+							console.log(JSON.stringify(JSON.parse(rsp).Data)); 
+							let result=[];
+							if(Array.isArray(JSON.parse(rsp).Data)){
+								result=JSON.parse(rsp).Data;
+								news.items = result;
+								mui('#list').pullRefresh().refresh(true);
+							}else{
+								news.items = [];
+							}
+							
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast('获取内容失败');
+						//TODO 此处可以向服务端告警
+					}
+				});
+			}
+
+			/**
+			 * 上拉加载拉取历史列表 
+			 */
+			function pullupRefresh() {
+				maxIndex++;
+				console.log(maxIndex);
+				//请求历史列表信息流
+				mui.ajax(WMSUrl + "/api/Audit/FlowList", {
+					dataType: 'JSON',
+					type: 'get',
+					data: {
+						pagesize: pagesize,
+						pageindex: maxIndex,
+						token:tokenId
+					},
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					showWaiting: true,
+					async: false,
+					success: function(rsp) {
+						mui('#list').pullRefresh().endPulldownToRefresh();
+						if(rsp && rsp.length > 0) {
+							console.log(rsp);
+							let result=JSON.parse(rsp).Data;
+							console.log("length:"+result.length)
+							if(result.length>0){
+								news.items = [...news.items,...result];
+								if(result.length<pagesize){
+									mui('#list').pullRefresh().endPullupToRefresh(true);
+//									mui('#list').pullRefresh().refresh(true);
+								}
+							}else{
+								mui('#list').pullRefresh().endPullupToRefresh(true);
+//								mui('#list').pullRefresh().refresh(true);
+							}
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast('获取内容失败');
+						//TODO 此处可以向服务端告警
+					}
+				});
+			}
+
+			mui.plusReady(function() {
+				//预加载详情页
+				webview_detail = mui.preload({
+					url: '/pages/business/lend/detail.html',
+					id: 'detail',
+					styles: {
+						"render": "always",
+						"popGesture": "hide",
+//						"bounce": "vertical",
+						"bounceBackground": "",
+						"titleNView": titleNView
+					}
+				});
+			});
+
+			var news = new Vue({
+				el: '#news',
+				data: {
+//					banner: {}, //顶部banner数据
+					items: [] //列表信息流数据
+				},
+				methods:{
+					open_detail(item){
+						open_detail(item);
+					}
+				}
+			});
+
+//			/**
+//			 * 打开新闻详情
+//			 * 
+//			 * @param {Object} item 当前点击的新闻对象
+//			 */
+			function open_detail(item) {
+//				触发子窗口变更新闻详情
+				mui.fire(webview_detail, 'get_detail', {
+					ID:item.ID,
+					FlowName: item.FlowName,
+					BusinessCode: item.BusinessCode,
+					FlowType: item.FlowType,
+					ApplyPerson: item.ApplyPerson,
+					ApplyTime:item.ApplyTime,
+					Description:item.Description,
+					State:item.State,
+					Findex:item.Findex,
+					Data:item.Data
+				});
+//				更改详情页原生导航条信息
+				titleNView.titleText = item.FlowType+" : "+ item.BusinessCode ;
+				webview_detail.setStyle({
+					"titleNView": titleNView
+				});
+				setTimeout(function() {
+					webview_detail.show("slide-in-right", 300);
+				}, 150);
+			}
+//
+//			/**
+//			 * 1、将服务端返回数据，转换成前端需要的格式
+//			 * 2、若服务端返回格式和前端所需格式相同，则不需要改功能
+//			 * 
+//			 * @param {Array} items 
+//			 */
+//			function convert(items) {
+//				var newItems = [];
+//				items.forEach(function(item) {
+//					newItems.push({
+//						ID: item.ID,
+//						FlowName: item.FlowName,
+//						BusinessCode: item.BusinessCode,
+//						FlowType: item.FlowType,
+//						ApplyPerson: item.ApplyPerson,
+//						ApplyTime:item.ApplyTime,
+//						Description:item.Description,
+//						State:item.State,
+//						Findex:item.Findex,
+//						Data:item.Data
+//					});
+//				});
+//				return newItems;
+//			}
+
+			/**
+			 * 格式化时间的辅助类，将一个时间转换成x小时前、y天前等
+			 */
+//			var dateUtils = {
+//				UNITS: {
+//					'年': 31557600000,
+//					'月': 2629800000,
+//					'天': 86400000,
+//					'小时': 3600000,
+//					'分钟': 60000,
+//					'秒': 1000
+//				},
+//				humanize: function(milliseconds) {
+//					var humanize = '';
+//					mui.each(this.UNITS, function(unit, value) {
+//						if(milliseconds >= value) {
+//							humanize = Math.floor(milliseconds / value) + unit + '前';
+//							return false;
+//						}
+//						return true;
+//					});
+//					return humanize || '刚刚';
+//				},
+//				format: function(dateStr) {
+//					var date = this.parse(dateStr)
+//					var diff = Date.now() - date.getTime();
+//					if(diff < this.UNITS['天']) {
+//						return this.humanize(diff);
+//					}
+//
+//					var _format = function(number) {
+//						return(number < 10 ? ('0' + number) : number);
+//					};
+//					return date.getFullYear() + '/' + _format(date.getMonth() + 1) + '/' + _format(date.getDay()) + '-' + _format(date.getHours()) + ':' + _format(date.getMinutes());
+//				},
+//				parse: function(str) { //将"yyyy-mm-dd HH:MM:ss"格式的字符串，转化为一个Date对象
+//					var a = str.split(/[^0-9]/);
+//					return new Date(a[0], a[1] - 1, a[2], a[3], a[4], a[5]);
+//				}
+//			};
+		</script>
+	</body>
+
+</html>

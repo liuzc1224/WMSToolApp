@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">告警信息</h1>
+		</header>
+		
+		<div class="mui-content detail-item">
+			<div id="item1" class="mui-card mui-control-content mui-active">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media">
+						<a>
+							<div class="mui-media-body">
+								仓库名称
+								<p id="Name" class='mui-ellipsis mui-pull-right'></p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a>
+							<div class="mui-media-body">
+								仓库地址
+								<p id="Addres" class='mui-ellipsis mui-pull-right'></p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a>
+							<div class="mui-media-body">
+								正确位置
+								<p id="OldPosition" class='mui-ellipsis mui-pull-right'></p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a>
+							<div class="mui-media-body">
+								错误位置
+								<p id="NewPosition" class='mui-ellipsis mui-pull-right'></p>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		<script src="../../../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function(){
+				ws = plus.webview.currentWebview();
+				var list = ws.data;
+				document.getElementById('Name').innerHTML = list.GoodsName;
+				document.getElementById('Addres').innerHTML = list.Address;
+				document.getElementById('OldPosition').innerHTML = list.OldPosition;
+				document.getElementById('NewPosition').innerHTML = list.NewPosition;
+			});
+		</script>
+	</body>
+
+</html>

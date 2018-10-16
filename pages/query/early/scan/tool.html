@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../../../css/mui.min.css" />
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">盘点信息</h1>
+		</header>
+		
+		<div class="mui-content detail-item" id="app">
+			<div style="padding： 10px 10px;width: 95%;margin: 5px auto;">
+				<div id="segmentedControl" class="mui-segmented-control">
+					<a class="mui-control-item mui-active" href="#item1">物资信息</a>
+					<!--<a class="mui-control-item" href="#item2">入库信息</a>-->
+					<a class="mui-control-item" href="#item3">仓库信息</a>
+				</div>
+			</div>
+			<div id="bicycleDetail" style="padding-bottom： 15px;">
+				<div id="item1" class="mui-card mui-control-content mui-active">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;货物名称：
+									<p id="GoodsName" class='mui-ellipsis mui-pull-right'>{{items.GoodsName}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;货物编码：
+									<p id="GoodsCode" class='mui-ellipsis mui-pull-right'>{{items.GoodsCode}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									EPC：
+									<p id="EPC" class='mui-ellipsis mui-pull-right'>{{items.EPC}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;货物规格：
+									<p id="GoodsSpec" class='mui-ellipsis mui-pull-right'>{{items.GoodsSpec}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;货物型号：
+									<p id="GModel" class='mui-ellipsis mui-pull-right'>{{items.GModel}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;供应商：
+									<p id="Supplier" class='mui-ellipsis mui-pull-right'>{{items.Supplier}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;货物状态：
+									<p id="GoodState" class='mui-ellipsis mui-pull-right'>{{items.GoodState}}</p>
+								</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										&nbsp;&nbsp;货物库存：
+										<p id="Qty" class='mui-ellipsis mui-pull-right'>{{items.Qty}}</p>
+									</div>
+								</a>
+							</li>
+						<li class="mui-table-view-cell mui-media">
+							<a>
+								<div class="mui-media-body">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;质保期：
+									<p id="WARRANTY" class='mui-ellipsis mui-pull-right'>{{items.WARRANTY}}</p>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<!--<div id="item2" class="mui-control-content">
+					<div class="mui-card">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										入库单号
+										<p id="Barcode" class='mui-ellipsis mui-pull-right'>{{items.Barcode}}</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										入库时间
+										<p id="InDate" class='mui-ellipsis mui-pull-right'>{{items.InDate}}</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										入库类型
+										<p id="Price" class='mui-ellipsis mui-pull-right'>{{items.Price}}</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										入库数量
+										<p id="LifeDate" class='mui-ellipsis mui-pull-right'>{{items.LifeDate}}</p>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>-->
+				<div id="item3" class="mui-control-content">
+					<div class="mui-card">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										仓库：
+										<p id="WareName" class='mui-ellipsis mui-pull-right'>{{items.WareName}}</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										区域：
+										<p id="AreaName" class='mui-ellipsis mui-pull-right'>{{items.AreaName}}</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										库位：
+										<p id="SeatName" class='mui-ellipsis mui-pull-right'>{{items.SeatName}}</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										货架：
+										<p id="Manufactor" class='mui-ellipsis mui-pull-right'>{{items.RackName}}</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a>
+									<div class="mui-media-body">
+										货位：
+										<p id="PositionName" class='mui-ellipsis mui-pull-right'>{{items.PositionName}}</p>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+	
+			</div>
+		</div>
+		<script type="text/javascript" src="../../../../js/vue.js" ></script>
+		<script type="text/javascript" src="../../../../js/mui.min.js" ></script>
+		<script>
+			mui.init();
+			var app = new Vue({
+				el: '#app',
+				data: {
+					items: {}
+				},
+				methods:{
+					open_detail(item){
+						open_detail(item);
+					},
+				}
+			});
+			mui.plusReady(function() {
+				
+//				plus.screen.lockOrientation("portrait-primary");
+				ws = plus.webview.currentWebview();
+				let WMSUrl = localStorage.getItem('WMSUrl');
+				let tokenId = localStorage.getItem('tokenId');
+				let epc = ws.epc;
+//				let epc="00000002";
+				console.log("epc："+epc);
+				if(epc){
+					console.log(epc);
+					mui.ajax(WMSUrl + "/api/Goods/GetByEPC", {
+						dataType: 'JSON',
+						type: 'get',
+						data: {
+							token: tokenId,
+							EPC: epc,
+						},
+						timeout: 10000,
+						headers: {
+							'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'
+						},
+						showWaiting: true,
+						async: false,
+						success: function(rsp) {
+							console.log(JSON.stringify(JSON.parse(rsp).Data));
+							var result = JSON.parse(rsp); 
+							if(result.Success===true){
+								app.items=result.Data;
+							}else{
+								mui.toast('查询不到此物品');
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							mui.toast('网络不佳，请稍后重试');
+							console.log(type);
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>
